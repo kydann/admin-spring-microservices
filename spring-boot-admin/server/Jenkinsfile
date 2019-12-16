@@ -1,0 +1,47 @@
+pipeline {
+
+    agent any 
+		
+	stages {
+
+		stage('Compilacion'){
+			
+			steps {
+				echo 'Limpiando y Compilando aplicacion'
+					sh '/var/jenkins_home/apache-maven-3.6.3/bin/mvn clean package -Dmaven.test.skip=true'
+			}
+
+		}
+
+		stage('Construccion'){
+			
+			steps {
+
+				echo 'Creando JAR'
+					sh '/var/jenkins_home/apache-maven-3.6.3/bin/mvn install -Dmaven.test.skip=true'
+			}
+
+		}
+
+		stage('Dockerizando'){
+
+			steps {
+					echo 'Dockerizando aplicación'
+
+					sh '/var/jenkins_home/apache-maven-3.6.3/bin/mvn dockerfile:build '
+				
+			}
+
+		}
+
+		stage('Deploy'){
+
+			steps {
+
+				echo 'Deployando aplicacion'
+					sh '/var/jenkins_home/apache-maven-3.6.3/bin/mvn deploy'
+				
+			}
+		}
+	}
+}
